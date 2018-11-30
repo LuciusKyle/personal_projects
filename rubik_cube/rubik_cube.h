@@ -35,12 +35,12 @@ public:
 		U_prime,
 		R_prime,
 		L_prime,
-    double_L,
-    double_R,
-    double_U,
-    double_D,
-    double_F,
-    double_B
+		double_L,
+		double_R,
+		double_U,
+		double_D,
+		double_F,
+		double_B
 	};
 
 	bool isSolved() const;
@@ -57,12 +57,6 @@ public:
 	void resetStep();
 private:
 	char overall_[48];
-	char *const up_;
-	char *const down_;
-	char *const front_;
-	char *const back_;
-	char *const left_;
-	char *const right_;
 	char steps_[15];
 	unsigned char step_count_;
 };
