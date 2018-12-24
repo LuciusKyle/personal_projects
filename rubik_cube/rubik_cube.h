@@ -1,6 +1,7 @@
 #ifndef _RUBIK_CUBE_H_
 #define _RUBIK_CUBE_H_
 
+#include<array>
 #include<cstddef> // size_t
 
 class RubikCube {
