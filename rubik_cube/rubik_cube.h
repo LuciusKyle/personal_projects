@@ -62,4 +62,77 @@ private:
 	unsigned char step_count_;
 };
 
+class CompressedCube {
+public:
+	explicit CompressedCube(const char *origin_cube);
+	CompressedCube(const RubikCube &origin_cube);
+	CompressedCube(const CompressedCube &);
+	CompressedCube() = delete;
+
+	bool operator==(const CompressedCube &) const;
+	bool operator<(const CompressedCube &) const;
+
+	const unsigned char compressed_cube_[18];
+};
+
+constexpr size_t kCubeSize = 48;
+constexpr size_t kCubeMemSize = sizeof(RubikCube);
+
+const RubikCube kInitialCube(
+	RubikCube::Colors::White, RubikCube::Colors::White,
+	RubikCube::Colors::White, RubikCube::Colors::White,
+	RubikCube::Colors::White, RubikCube::Colors::White,
+	RubikCube::Colors::White, RubikCube::Colors::White,
+	RubikCube::Colors::Yellow, RubikCube::Colors::Yellow,
+	RubikCube::Colors::Yellow, RubikCube::Colors::Yellow,
+	RubikCube::Colors::Yellow, RubikCube::Colors::Yellow,
+	RubikCube::Colors::Yellow, RubikCube::Colors::Yellow,
+	RubikCube::Colors::Red, RubikCube::Colors::Red, RubikCube::Colors::Red,
+	RubikCube::Colors::Red, RubikCube::Colors::Red, RubikCube::Colors::Red,
+	RubikCube::Colors::Red, RubikCube::Colors::Red, RubikCube::Colors::Orange,
+	RubikCube::Colors::Orange, RubikCube::Colors::Orange,
+	RubikCube::Colors::Orange, RubikCube::Colors::Orange,
+	RubikCube::Colors::Orange, RubikCube::Colors::Orange,
+	RubikCube::Colors::Orange, RubikCube::Colors::Green,
+	RubikCube::Colors::Green, RubikCube::Colors::Green,
+	RubikCube::Colors::Green, RubikCube::Colors::Green,
+	RubikCube::Colors::Green, RubikCube::Colors::Green,
+	RubikCube::Colors::Green, RubikCube::Colors::Blue, RubikCube::Colors::Blue,
+	RubikCube::Colors::Blue, RubikCube::Colors::Blue, RubikCube::Colors::Blue,
+	RubikCube::Colors::Blue, RubikCube::Colors::Blue, RubikCube::Colors::Blue);
+
+constexpr std::array kColorsDict{ 'R', 'O', 'G', 'B', 'Y', 'W' };
+constexpr std::array kCubeTransforms{
+	RubikCube::CubeTransforms::L,        RubikCube::CubeTransforms::R,
+	RubikCube::CubeTransforms::U,        RubikCube::CubeTransforms::D,
+	RubikCube::CubeTransforms::F,        RubikCube::CubeTransforms::B,
+	RubikCube::CubeTransforms::L_prime,  RubikCube::CubeTransforms::R_prime,
+	RubikCube::CubeTransforms::U_prime,  RubikCube::CubeTransforms::D_prime,
+	RubikCube::CubeTransforms::F_prime,  RubikCube::CubeTransforms::B_prime,
+	RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_R,
+	RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_D,
+	RubikCube::CubeTransforms::double_F, RubikCube::CubeTransforms::double_B };
+constexpr std::array<std::string_view, 18> kCubeTransformsDict{ "L", "R", "U", "D", "F", "B", "B'", "F'", "D'", "U'", "R'", "L'","L2", "R2", "U2", "D2", "F2", "B2" };
+
+constexpr std::array kAvailableTransforms{
+  std::array{ RubikCube::CubeTransforms::R, RubikCube::CubeTransforms::U, RubikCube::CubeTransforms::D, RubikCube::CubeTransforms::F, RubikCube::CubeTransforms::B, RubikCube::CubeTransforms::B_prime, RubikCube::CubeTransforms::F_prime, RubikCube::CubeTransforms::D_prime, RubikCube::CubeTransforms::U_prime, RubikCube::CubeTransforms::R_prime, RubikCube::CubeTransforms::double_R, RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_D, RubikCube::CubeTransforms::double_F, RubikCube::CubeTransforms::double_B },
+  std::array{ RubikCube::CubeTransforms::L, RubikCube::CubeTransforms::U, RubikCube::CubeTransforms::D, RubikCube::CubeTransforms::F, RubikCube::CubeTransforms::B, RubikCube::CubeTransforms::B_prime, RubikCube::CubeTransforms::F_prime, RubikCube::CubeTransforms::D_prime, RubikCube::CubeTransforms::U_prime, RubikCube::CubeTransforms::L_prime, RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_D, RubikCube::CubeTransforms::double_F, RubikCube::CubeTransforms::double_B },
+  std::array{ RubikCube::CubeTransforms::L, RubikCube::CubeTransforms::R, RubikCube::CubeTransforms::D, RubikCube::CubeTransforms::F, RubikCube::CubeTransforms::B, RubikCube::CubeTransforms::B_prime, RubikCube::CubeTransforms::F_prime, RubikCube::CubeTransforms::D_prime, RubikCube::CubeTransforms::R_prime, RubikCube::CubeTransforms::L_prime, RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_R, RubikCube::CubeTransforms::double_D, RubikCube::CubeTransforms::double_F, RubikCube::CubeTransforms::double_B },
+  std::array{ RubikCube::CubeTransforms::L, RubikCube::CubeTransforms::R, RubikCube::CubeTransforms::U, RubikCube::CubeTransforms::F, RubikCube::CubeTransforms::B, RubikCube::CubeTransforms::B_prime, RubikCube::CubeTransforms::F_prime, RubikCube::CubeTransforms::U_prime, RubikCube::CubeTransforms::R_prime, RubikCube::CubeTransforms::L_prime, RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_R, RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_F, RubikCube::CubeTransforms::double_B },
+  std::array{ RubikCube::CubeTransforms::L, RubikCube::CubeTransforms::R, RubikCube::CubeTransforms::U, RubikCube::CubeTransforms::D, RubikCube::CubeTransforms::B, RubikCube::CubeTransforms::B_prime, RubikCube::CubeTransforms::D_prime, RubikCube::CubeTransforms::U_prime, RubikCube::CubeTransforms::R_prime, RubikCube::CubeTransforms::L_prime, RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_R, RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_D, RubikCube::CubeTransforms::double_B },
+  std::array{ RubikCube::CubeTransforms::L, RubikCube::CubeTransforms::R, RubikCube::CubeTransforms::U, RubikCube::CubeTransforms::D, RubikCube::CubeTransforms::F, RubikCube::CubeTransforms::F_prime, RubikCube::CubeTransforms::D_prime, RubikCube::CubeTransforms::U_prime, RubikCube::CubeTransforms::R_prime, RubikCube::CubeTransforms::L_prime, RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_R, RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_D, RubikCube::CubeTransforms::double_F },
+  std::array{ RubikCube::CubeTransforms::L, RubikCube::CubeTransforms::R, RubikCube::CubeTransforms::U, RubikCube::CubeTransforms::D, RubikCube::CubeTransforms::F, RubikCube::CubeTransforms::F_prime, RubikCube::CubeTransforms::D_prime, RubikCube::CubeTransforms::U_prime, RubikCube::CubeTransforms::R_prime, RubikCube::CubeTransforms::L_prime, RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_R, RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_D, RubikCube::CubeTransforms::double_F },
+  std::array{ RubikCube::CubeTransforms::L, RubikCube::CubeTransforms::R, RubikCube::CubeTransforms::U, RubikCube::CubeTransforms::D, RubikCube::CubeTransforms::B, RubikCube::CubeTransforms::B_prime, RubikCube::CubeTransforms::D_prime, RubikCube::CubeTransforms::U_prime, RubikCube::CubeTransforms::R_prime, RubikCube::CubeTransforms::L_prime, RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_R, RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_D, RubikCube::CubeTransforms::double_B },
+  std::array{ RubikCube::CubeTransforms::L, RubikCube::CubeTransforms::R, RubikCube::CubeTransforms::U, RubikCube::CubeTransforms::F, RubikCube::CubeTransforms::B, RubikCube::CubeTransforms::B_prime, RubikCube::CubeTransforms::F_prime, RubikCube::CubeTransforms::U_prime, RubikCube::CubeTransforms::R_prime, RubikCube::CubeTransforms::L_prime, RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_R, RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_F, RubikCube::CubeTransforms::double_B },
+  std::array{ RubikCube::CubeTransforms::L, RubikCube::CubeTransforms::R, RubikCube::CubeTransforms::D, RubikCube::CubeTransforms::F, RubikCube::CubeTransforms::B, RubikCube::CubeTransforms::B_prime, RubikCube::CubeTransforms::F_prime, RubikCube::CubeTransforms::D_prime, RubikCube::CubeTransforms::R_prime, RubikCube::CubeTransforms::L_prime, RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_R, RubikCube::CubeTransforms::double_D, RubikCube::CubeTransforms::double_F, RubikCube::CubeTransforms::double_B },
+  std::array{ RubikCube::CubeTransforms::L, RubikCube::CubeTransforms::U, RubikCube::CubeTransforms::D, RubikCube::CubeTransforms::F, RubikCube::CubeTransforms::B, RubikCube::CubeTransforms::B_prime, RubikCube::CubeTransforms::F_prime, RubikCube::CubeTransforms::D_prime, RubikCube::CubeTransforms::U_prime, RubikCube::CubeTransforms::L_prime, RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_D, RubikCube::CubeTransforms::double_F, RubikCube::CubeTransforms::double_B },
+  std::array{ RubikCube::CubeTransforms::R, RubikCube::CubeTransforms::U, RubikCube::CubeTransforms::D, RubikCube::CubeTransforms::F, RubikCube::CubeTransforms::B, RubikCube::CubeTransforms::B_prime, RubikCube::CubeTransforms::F_prime, RubikCube::CubeTransforms::D_prime, RubikCube::CubeTransforms::U_prime, RubikCube::CubeTransforms::R_prime, RubikCube::CubeTransforms::double_R, RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_D, RubikCube::CubeTransforms::double_F, RubikCube::CubeTransforms::double_B },
+  std::array{ RubikCube::CubeTransforms::R, RubikCube::CubeTransforms::U, RubikCube::CubeTransforms::D, RubikCube::CubeTransforms::F, RubikCube::CubeTransforms::B, RubikCube::CubeTransforms::B_prime, RubikCube::CubeTransforms::F_prime, RubikCube::CubeTransforms::D_prime, RubikCube::CubeTransforms::U_prime, RubikCube::CubeTransforms::R_prime, RubikCube::CubeTransforms::double_R, RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_D, RubikCube::CubeTransforms::double_F, RubikCube::CubeTransforms::double_B },
+  std::array{ RubikCube::CubeTransforms::L, RubikCube::CubeTransforms::U, RubikCube::CubeTransforms::D, RubikCube::CubeTransforms::F, RubikCube::CubeTransforms::B, RubikCube::CubeTransforms::B_prime, RubikCube::CubeTransforms::F_prime, RubikCube::CubeTransforms::D_prime, RubikCube::CubeTransforms::U_prime, RubikCube::CubeTransforms::L_prime, RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_D, RubikCube::CubeTransforms::double_F, RubikCube::CubeTransforms::double_B },
+  std::array{ RubikCube::CubeTransforms::L, RubikCube::CubeTransforms::R, RubikCube::CubeTransforms::D, RubikCube::CubeTransforms::F, RubikCube::CubeTransforms::B, RubikCube::CubeTransforms::B_prime, RubikCube::CubeTransforms::F_prime, RubikCube::CubeTransforms::D_prime, RubikCube::CubeTransforms::R_prime, RubikCube::CubeTransforms::L_prime, RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_R, RubikCube::CubeTransforms::double_D, RubikCube::CubeTransforms::double_F, RubikCube::CubeTransforms::double_B },
+  std::array{ RubikCube::CubeTransforms::L, RubikCube::CubeTransforms::R, RubikCube::CubeTransforms::U, RubikCube::CubeTransforms::F, RubikCube::CubeTransforms::B, RubikCube::CubeTransforms::B_prime, RubikCube::CubeTransforms::F_prime, RubikCube::CubeTransforms::U_prime, RubikCube::CubeTransforms::R_prime, RubikCube::CubeTransforms::L_prime, RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_R, RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_F, RubikCube::CubeTransforms::double_B },
+  std::array{ RubikCube::CubeTransforms::L, RubikCube::CubeTransforms::R, RubikCube::CubeTransforms::U, RubikCube::CubeTransforms::D, RubikCube::CubeTransforms::B, RubikCube::CubeTransforms::B_prime, RubikCube::CubeTransforms::D_prime, RubikCube::CubeTransforms::U_prime, RubikCube::CubeTransforms::R_prime, RubikCube::CubeTransforms::L_prime, RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_R, RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_D, RubikCube::CubeTransforms::double_B },
+  std::array{ RubikCube::CubeTransforms::L, RubikCube::CubeTransforms::R, RubikCube::CubeTransforms::U, RubikCube::CubeTransforms::D, RubikCube::CubeTransforms::F, RubikCube::CubeTransforms::F_prime, RubikCube::CubeTransforms::D_prime, RubikCube::CubeTransforms::U_prime, RubikCube::CubeTransforms::R_prime, RubikCube::CubeTransforms::L_prime, RubikCube::CubeTransforms::double_L, RubikCube::CubeTransforms::double_R, RubikCube::CubeTransforms::double_U, RubikCube::CubeTransforms::double_D, RubikCube::CubeTransforms::double_F }
+};
+
 #endif // !_RUBIK_CUBE_H_

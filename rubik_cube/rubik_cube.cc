@@ -474,7 +474,7 @@ const RubikCube *RubikCube::transform(CubeTransforms t) {
 }
 
 bool RubikCube::operator==(const RubikCube &y) const {
-	return 0 == memcmp(y.getCube(), this->overall_, sizeof(overall_));
+	return !memcmp(y.getCube(), this->overall_, sizeof(overall_));
 }
 RubikCube &RubikCube::operator=(const RubikCube &y) {
 	if (this != &y) {
@@ -489,3 +489,61 @@ void RubikCube::resetStep() {
 	memset(steps_, 0, sizeof(steps_));
 	step_count_ = 0;
 }
+
+CompressedCube::CompressedCube(const char *origin_cube)
+	:compressed_cube_{
+		static_cast<unsigned char>((origin_cube[0 * 8 + 0] << 5) | (origin_cube[0 * 8 + 1] << 2) | (origin_cube[0 * 8 + 2] >> 1)),
+		static_cast<unsigned char>((origin_cube[0 * 8 + 2] << 7) | (origin_cube[0 * 8 + 3] << 4) | (origin_cube[0 * 8 + 4] << 1) | (origin_cube[0 * 8 + 5] >> 2)),
+		static_cast<unsigned char>((origin_cube[0 * 8 + 5] << 6) | (origin_cube[0 * 8 + 6] << 3) | (origin_cube[0 * 8 + 7])),
+
+		static_cast<unsigned char>((origin_cube[1 * 8 + 0] << 5) | (origin_cube[1 * 8 + 1] << 2) | (origin_cube[1 * 8 + 2] >> 1)),
+		static_cast<unsigned char>((origin_cube[1 * 8 + 2] << 7) | (origin_cube[1 * 8 + 3] << 4) | (origin_cube[1 * 8 + 4] << 1) | (origin_cube[1 * 8 + 5] >> 2)),
+		static_cast<unsigned char>((origin_cube[1 * 8 + 5] << 6) | (origin_cube[1 * 8 + 6] << 3) | (origin_cube[1 * 8 + 7])),
+
+		static_cast<unsigned char>((origin_cube[2 * 8 + 0] << 5) | (origin_cube[2 * 8 + 1] << 2) | (origin_cube[2 * 8 + 2] >> 1)),
+		static_cast<unsigned char>((origin_cube[2 * 8 + 2] << 7) | (origin_cube[2 * 8 + 3] << 4) | (origin_cube[2 * 8 + 4] << 1) | (origin_cube[2 * 8 + 5] >> 2)),
+		static_cast<unsigned char>((origin_cube[2 * 8 + 5] << 6) | (origin_cube[2 * 8 + 6] << 3) | (origin_cube[2 * 8 + 7])),
+
+		static_cast<unsigned char>((origin_cube[3 * 8 + 0] << 5) | (origin_cube[3 * 8 + 1] << 2) | (origin_cube[3 * 8 + 2] >> 1)),
+		static_cast<unsigned char>((origin_cube[3 * 8 + 2] << 7) | (origin_cube[3 * 8 + 3] << 4) | (origin_cube[3 * 8 + 4] << 1) | (origin_cube[3 * 8 + 5] >> 2)),
+		static_cast<unsigned char>((origin_cube[3 * 8 + 5] << 6) | (origin_cube[3 * 8 + 6] << 3) | (origin_cube[3 * 8 + 7])),
+
+		static_cast<unsigned char>((origin_cube[4 * 8 + 0] << 5) | (origin_cube[4 * 8 + 1] << 2) | (origin_cube[4 * 8 + 2] >> 1)),
+		static_cast<unsigned char>((origin_cube[4 * 8 + 2] << 7) | (origin_cube[4 * 8 + 3] << 4) | (origin_cube[4 * 8 + 4] << 1) | (origin_cube[4 * 8 + 5] >> 2)),
+		static_cast<unsigned char>((origin_cube[4 * 8 + 5] << 6) | (origin_cube[4 * 8 + 6] << 3) | (origin_cube[4 * 8 + 7])),
+
+		static_cast<unsigned char>((origin_cube[5 * 8 + 0] << 5) | (origin_cube[5 * 8 + 1] << 2) | (origin_cube[5 * 8 + 2] >> 1)),
+		static_cast<unsigned char>((origin_cube[5 * 8 + 2] << 7) | (origin_cube[5 * 8 + 3] << 4) | (origin_cube[5 * 8 + 4] << 1) | (origin_cube[5 * 8 + 5] >> 2)),
+		static_cast<unsigned char>((origin_cube[5 * 8 + 5] << 6) | (origin_cube[5 * 8 + 6] << 3) | (origin_cube[5 * 8 + 7])) }
+{}
+
+CompressedCube::CompressedCube(const RubikCube &origin_cube) :CompressedCube(origin_cube.getCube()) {}
+
+bool CompressedCube::operator==(const CompressedCube &y) const {
+	return !memcmp(y.compressed_cube_, this->compressed_cube_, sizeof(compressed_cube_));
+}
+
+bool CompressedCube::operator<(const CompressedCube &y) const {
+	return 0 < memcmp(y.compressed_cube_, this->compressed_cube_, sizeof(compressed_cube_));
+}
+
+CompressedCube::CompressedCube(const CompressedCube &y) :compressed_cube_{
+	y.compressed_cube_[0],
+	y.compressed_cube_[1],
+	y.compressed_cube_[2],
+	y.compressed_cube_[3],
+	y.compressed_cube_[4],
+	y.compressed_cube_[5],
+	y.compressed_cube_[6],
+	y.compressed_cube_[7],
+	y.compressed_cube_[8],
+	y.compressed_cube_[9],
+	y.compressed_cube_[10],
+	y.compressed_cube_[11],
+	y.compressed_cube_[12],
+	y.compressed_cube_[13],
+	y.compressed_cube_[14],
+	y.compressed_cube_[15],
+	y.compressed_cube_[16],
+	y.compressed_cube_[17] }
+{}
